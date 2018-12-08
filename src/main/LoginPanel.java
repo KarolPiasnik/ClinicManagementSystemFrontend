@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 public class LoginPanel extends JPanel{
 	public static final int HEIGHT = 400;
@@ -22,10 +23,10 @@ public class LoginPanel extends JPanel{
 	private JButton registerButton;						//przycisk "Przejdü do rejestracji"
 	private JTextField emailInput; 						//input na maila
 	private JPasswordField passwordInput; 				//input na has≥o
-	//private JPanel loginPanel;
+	private JPanel loginPanel;
 
 	public LoginPanel() {
-		//loginPanel = this;
+		loginPanel = this;
 		this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		this.setLayout(new FlowLayout());
 		this.setBorder(BorderFactory.createEmptyBorder(100, 0, 0, 0));
@@ -71,7 +72,8 @@ public class LoginPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Funkcja logowania.");
+			System.out.println("Podany mail: " + emailInput.getText());
+			System.out.println("Podane has≥o: " + passwordInput.getText());
 		}
 	}
 
@@ -84,6 +86,9 @@ public class LoginPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			loginPanel.removeAll();
+			loginPanel.add(new JLabel("Wyúwietlenie formularza rejestracji"));
+			SwingUtilities.updateComponentTreeUI(loginPanel);
 			System.out.println("Wyúwietlenie formularza rejestracji.");
 		}
 	}
