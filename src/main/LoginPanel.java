@@ -12,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -86,9 +87,13 @@ public class LoginPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			loginPanel.removeAll();
-			loginPanel.add(new JLabel("Wyœwietlenie formularza rejestracji"));
-			SwingUtilities.updateComponentTreeUI(loginPanel);
+			JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(loginPanel);
+			topFrame.getContentPane().removeAll();
+			topFrame.getContentPane().add(new RegisterPanel());
+			topFrame.invalidate();
+			topFrame.validate();
+			topFrame.repaint();
+			topFrame.setTitle("Rejestracja");
 			System.out.println("Wyœwietlenie formularza rejestracji.");
 		}
 	}
