@@ -180,6 +180,20 @@ public class RegisterPanel extends JPanel {
 		LoginPanelButton(){
 			super("Przejdü do logowania");
 			addActionListener(this);
+			setBackground(new Color(188, 214, 255));
+			Border emptyBorder = BorderFactory.createEmptyBorder(10,10,10,10);
+			this.setBorder(emptyBorder);
+			// event po najechaniu i zjechaniu myszkπ z przycisku
+			this.addMouseListener(new java.awt.event.MouseAdapter() {
+			    public void mouseEntered(java.awt.event.MouseEvent evt) {
+			    	loginPanelButton.setBackground(new Color(211, 228, 255));
+			    	loginPanelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			    }
+
+			    public void mouseExited(java.awt.event.MouseEvent evt) {
+			    	loginPanelButton.setBackground(new Color(188, 214, 255));
+			    }
+			});
 		}
 		
 		public void actionPerformed(ActionEvent e) {
