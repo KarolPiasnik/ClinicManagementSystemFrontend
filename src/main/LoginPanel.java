@@ -14,12 +14,11 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 public class LoginPanel extends JPanel{
-	public static final int HEIGHT = 600;
-	public static final int WIDTH = 1024;
 	private JButton loginButton;						//przycisk "Zaloguj sie"
 	private JButton registerButton;						//przycisk "Przejdü do rejestracji"
 	private JTextField emailInput; 						//input na maila
@@ -28,7 +27,6 @@ public class LoginPanel extends JPanel{
 
 	public LoginPanel() {
 		loginPanel = this;
-		this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		this.setLayout(new FlowLayout());
 		this.setBorder(BorderFactory.createEmptyBorder(100, 0, 0, 0));
 		
@@ -88,8 +86,9 @@ public class LoginPanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(loginPanel);
+			JScrollPane scroll = new JScrollPane(new RegisterPanel(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			topFrame.getContentPane().removeAll();
-			topFrame.getContentPane().add(new RegisterPanel());
+			topFrame.getContentPane().add(scroll);
 			topFrame.invalidate();
 			topFrame.validate();
 			topFrame.repaint();

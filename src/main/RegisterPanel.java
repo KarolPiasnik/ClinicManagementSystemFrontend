@@ -2,6 +2,7 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -17,17 +18,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import main.LoginPanel.Login;
 
 public class RegisterPanel extends JPanel {
-
-	public static final int HEIGHT = 600;
-	public static final int WIDTH = 1024;
 	
 	private JButton registerButton;						//przycisk "Zarejestruj"
 	private JButton loginPanelButton;					//przycisk "Przejdz do logowania"
@@ -44,21 +45,21 @@ public class RegisterPanel extends JPanel {
 	
 	public RegisterPanel() {
 		registerPanel = this;
-		this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		this.setLayout(new FlowLayout());
-		// this.setBorder(BorderFactory.createEmptyBorder(100, 0, 0, 0));
 		createHeader();
 		createButtons();
 		createFields();
 		createPanels();
 	}
 	
+	// tworzy tytu³ strony 
 	private void createHeader() {
-		JLabel title = new JLabel("<html><div style='font-size: 30px; text-align: center;'>Clinic Management System</div></html>");
-		// title.setFont(new Font("Calibri", Font.PLAIN,30));
+		JLabel title = new JLabel("<html><div style='font-size: 30px; text-align: center;'>Clinic Management System</div>"
+				+ "<div style='text-align: center; margin: 40px 0px 0px 0px; font-size: 16px'>Zarejestruj siê w naszym systemie:</div></html>");
 		titlePanel = new JPanel();
 		titlePanel.setLayout(new GridLayout(1,1));
 		titlePanel.setBorder(BorderFactory.createEmptyBorder(50, 0, 50, 0));
+		titlePanel.setBackground(new Color(255, 228, 188));
 		titlePanel.add(title);
 	}
 	
@@ -106,7 +107,8 @@ public class RegisterPanel extends JPanel {
 		peselInput.setMargin(new Insets(0, 10, 0, 10));
 		
 		inputPanel = new JPanel();
-		inputPanel.setLayout(new GridLayout(5,2));
+		inputPanel.setLayout(new GridLayout(5,2,10,10));
+		inputPanel.setBackground(new Color(255, 228, 188));
 		inputPanel.add(firstName);
 		inputPanel.add(firstNameInput);
 		inputPanel.add(lastName);
@@ -122,18 +124,21 @@ public class RegisterPanel extends JPanel {
 	// tworzy panel przycisków i parent panel
 	private void createPanels() {
 		buttonPanel = new JPanel();
-		buttonPanel.setLayout(new GridLayout(2,1));
+		buttonPanel.setLayout(new GridLayout(2,1,10,10));
 		buttonPanel.add(registerButton);
 		buttonPanel.add(loginPanelButton);
 		buttonPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		buttonPanel.setBackground(new Color(255, 228, 188));
 		
 		parentPanel = new JPanel();
 		parentPanel.setLayout(new BorderLayout());
+		parentPanel.setBackground(new Color(255, 228, 188));
 		
 		parentPanel.add(inputPanel, BorderLayout.CENTER);
 		parentPanel.add(buttonPanel, BorderLayout.SOUTH);
 		parentPanel.add(titlePanel, BorderLayout.NORTH);
-		add(parentPanel);
+		add(parentPanel);		
+		setBackground(new Color(255, 228, 188));
 	}
 	
 	// klasa dla przycisku 'Zarejestruj'
@@ -143,16 +148,19 @@ public class RegisterPanel extends JPanel {
 			super("Zarejestruj");
 			addActionListener(this);
 			this.setMargin(new Insets(10, 0, 10, 0));
-			this.setBackground(new Color(0, 155, 255));
+			this.setBackground(new Color(198, 89, 0));
+			this.setForeground(new Color(246, 246, 246));
+			Border emptyBorder = BorderFactory.createEmptyBorder(10,10,10,10);
+			this.setBorder(emptyBorder);
 			// event po najechaniu i zjechaniu myszk¹ z przycisku
 			this.addMouseListener(new java.awt.event.MouseAdapter() {
 			    public void mouseEntered(java.awt.event.MouseEvent evt) {
-			    	registerButton.setBackground(new Color(99, 194, 255));
+			    	registerButton.setBackground(new Color(255, 114, 0	));
 			    	registerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			    }
 
 			    public void mouseExited(java.awt.event.MouseEvent evt) {
-			    	registerButton.setBackground(new Color(0, 155, 255));
+			    	registerButton.setBackground(new Color(198, 89, 0));
 			    }
 			});
 		}
@@ -176,8 +184,9 @@ public class RegisterPanel extends JPanel {
 		
 		public void actionPerformed(ActionEvent e) {
 			JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(registerPanel);
+			JScrollPane scroll = new JScrollPane(new LoginPanel(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			topFrame.getContentPane().removeAll();
-			topFrame.getContentPane().add(new LoginPanel());
+			topFrame.getContentPane().add(scroll);
 			topFrame.invalidate();
 			topFrame.validate();	
 			topFrame.repaint();
