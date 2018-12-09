@@ -1,5 +1,8 @@
 package main;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
 import javax.swing.*;
 
 public class MainFrame extends JFrame {
@@ -13,6 +16,10 @@ public class MainFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
 		setVisible(true);
+		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+	    int x = (int) ((dimension.getWidth() - this.getWidth()) / 2);
+	    int y = (int) ((dimension.getHeight() - this.getHeight()) / 2);
+	    this.setLocation(x, y);
 	}
 	public static void main(String[] args) {
 		new MainFrame();

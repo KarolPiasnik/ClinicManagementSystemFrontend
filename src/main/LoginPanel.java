@@ -18,8 +18,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 public class LoginPanel extends JPanel{
-	public static final int HEIGHT = 400;
-	public static final int WIDTH = 700;
+	public static final int HEIGHT = 600;
+	public static final int WIDTH = 1024;
 	private JButton loginButton;						//przycisk "Zaloguj sie"
 	private JButton registerButton;						//przycisk "Przejdü do rejestracji"
 	private JTextField emailInput; 						//input na maila
