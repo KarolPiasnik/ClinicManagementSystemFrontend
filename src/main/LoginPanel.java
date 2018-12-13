@@ -10,9 +10,12 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -22,6 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+
 
 public class LoginPanel extends JPanel{
 	private JButton loginButton;								//przycisk "Zaloguj sie"
@@ -127,13 +131,54 @@ public class LoginPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Podany mail: " + emailInput.getText());
-			System.out.println("Podane has³o: " + passwordInput.getText());
+			String allValidationErrors = "";
+			
+			// walidacja email
+			if(getEmail().equals(""))
+				allValidationErrors += "Proszê podaæ adres mailowy.\n";
+			else if(!RegisterPanel.validate(getEmail().getText()))
+				allValidationErrors += "Proszê wpisaæ poprawny email\n";
+			
+			// walidacja has³a
+			if(getPassword().length()==0)
+				allValidationErrors += "Proszê podaæ has³o.\n";
+		
+			System.out.println(allValidationErrors);
+			if(!allValidationErrors.equals(""))
+				JOptionPane.showMessageDialog(null, allValidationErrors); 
+			else
+				loginUser(getEmail().getText(),getPassword());	
 		}
 	}
-
+	
+	// wyra¿enie regularne dla poprawnego emaila
+	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
+	    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+	
+	// sprawdza czy email ma poprawny format
+	public static boolean validate(String emailStr) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
+        return matcher.find();
+	}
+	//zwraca mail
+	public JTextField getEmail() {
+		return emailInput;
+	}
+	//zwraca has³o
+	public String getPassword() {
+		String password = "";
+		char[] pass = passwordInput.getPassword();
+		for(int i = 0; i < pass.length; i++) {
+			password += pass[i];
+		}
+		return password;
+	}
+	//funkcja wysy³aj¹ca dane do zweryfikowania logowania
+	public void loginUser(String mail, String pass) {
+		System.out.println("Email: " + mail + ", password: " + pass);
+	}
+	//klasa odpwoeidzialna za przycisk "przejdz do rejestracji"
 	class DrawRegisterForm extends JButton implements ActionListener {
-
 		DrawRegisterForm() {
 			super("PrzejdŸ do rejestracji");
 			addActionListener(this);
