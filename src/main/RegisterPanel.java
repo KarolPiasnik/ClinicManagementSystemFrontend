@@ -11,9 +11,17 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -29,7 +37,12 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
+
 import main.LoginPanel.Login;
+import org.apache.commons.io.IOUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 
 public class RegisterPanel extends JPanel {
 	
@@ -212,7 +225,11 @@ public class RegisterPanel extends JPanel {
 			if(!allValidationErrors.equals("")){
 				JOptionPane.showMessageDialog(null, allValidationErrors);
 			} else {
-				registerUser(getFirstName().getText(), getLastName().getText(), getEmail().getText(), getPassword(), getPesel().getText());
+				try {
+					registerUser(getFirstName().getText(), getLastName().getText(), getEmail().getText(), getPassword(), getPesel().getText());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 			
 			
@@ -284,8 +301,44 @@ public class RegisterPanel extends JPanel {
 	}
 	
 	// metoda wysy³a dane do serwera
-	private void registerUser(String firstName, String lastName, String email, String password, String pesel) {
+	private void registerUser(String firstName, String lastName, String email, String password, String pesel) throws IOException {
 		System.out.println("Tutaj wyœle dane do serwera");
+
+		JSONObject userData = new JSONObject();
+		userData.put("username", getFirstName().getText());
+		userData.put("email", getEmail().getText());
+		userData.put("password", getPassword());
+
+		String query_url = "http://localhost:8081/register";
+		try{
+			URL url = new URL(query_url);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setRequestMethod("POST");
+			OutputStream os = conn.getOutputStream();
+			os.write(userData.toString().getBytes("UTF-8"));
+			os.close();
+
+			// read the response
+			InputStream in = new BufferedInputStream(conn.getInputStream());
+			String result = IOUtils.toString(in, "UTF-8");
+
+			JSONParser parser = new JSONParser();
+			JSONObject json = (JSONObject) parser.parse(result);
+
+			// pobieram id usera, ¿eby mo¿na by³o potem aktywowaæ go,
+			// dziêki Karol za tak zjeban¹ logikê :)
+			Object id = json.get("id");
+
+			System.out.println(id.toString());
+
+			in.close();
+			conn.disconnect();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 
 	// gettery dla wszystkich inputów
