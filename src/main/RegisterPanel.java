@@ -11,6 +11,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -170,24 +172,41 @@ public class RegisterPanel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			String allValidationErrors = "";
 			
+			// walidacja imienia
 			String validationFirstNameResult = validateField(getFirstName(), "Imiê");
 			if(!validationFirstNameResult.equals("")) {
 				allValidationErrors += validationFirstNameResult + "\n";
 			}
 			
+			// walidacja nazwiska
 			String validationLastNameResult = validateField(getLastName(), "Nazwisko");
 			if(!validationLastNameResult.equals("")) {
 				allValidationErrors += validationLastNameResult  + "\n";
 			}
 			
+			// walidacja peselu
 			String validationPESELResult = validateField(getPesel(), "PESEL");
 			if(!validationPESELResult.equals("")) {
 				allValidationErrors += validationPESELResult  + "\n";
+			} else if(!isNumeric(getPesel().getText())) {
+				allValidationErrors += "Pesel musi zawieraæ same cyfry\n";
+			} else if(getPesel().getText().length() != 11) {
+				allValidationErrors += "Pesel musi zawieraæ 11 cyfr\n";
 			}
 			
+			// walidacja has³a
 			if(getPassword().length() < 5) {
 				allValidationErrors += "Has³o musi zawieraæ conajmniej 5 znaków\n";
 			}
+			
+			// walidacja email
+			String validationEmailResult = validateField(getEmail(), "Email");
+			if(!validationEmailResult.equals("")) {
+				allValidationErrors += validationEmailResult  + "\n";
+			} else if(!RegisterPanel.validate(getEmail().getText())) {
+				allValidationErrors += "Proszê wpisaæ poprawny email\n";
+			}
+			
 			
 			System.out.println(allValidationErrors);
 			if(!allValidationErrors.equals("")){
@@ -198,6 +217,26 @@ public class RegisterPanel extends JPanel {
 			
 			
 		}
+	}
+	
+	// wyra¿enie regularne dla poprawnego emaila
+	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
+	    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+	
+	// sprawdza czy email ma poprawny format
+	public static boolean validate(String emailStr) {
+	        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
+	        return matcher.find();
+	}
+	
+	// sprawdza czy pesel jest liczb¹
+	public static boolean isNumeric(String strNum) {
+	    try {
+	        double d = Double.parseDouble(strNum);
+	    } catch (NumberFormatException | NullPointerException nfe) {
+	        return false;
+	    }
+	    return true;
 	}
 	
 	// walidacja imienia, nazwiska i peselu
@@ -244,6 +283,7 @@ public class RegisterPanel extends JPanel {
 		}
 	}
 	
+	// metoda wysy³a dane do serwera
 	private void registerUser(String firstName, String lastName, String email, String password, String pesel) {
 		System.out.println("Tutaj wyœle dane do serwera");
 	}
