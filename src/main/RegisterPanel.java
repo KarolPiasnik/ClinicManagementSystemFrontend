@@ -16,6 +16,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
@@ -167,12 +168,46 @@ public class RegisterPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Imiê: " + getFirstName());
-			System.out.println("Nazwisko: " + getLastName());
-			System.out.println("Email: " + getEmail());
-			System.out.println("Has³o: " + getPassword());
-			System.out.println("PESEL: " + getPesel());
+			String allValidationErrors = "";
+			
+			String validationFirstNameResult = validateField(getFirstName(), "Imiê");
+			if(!validationFirstNameResult.equals("")) {
+				allValidationErrors += validationFirstNameResult + "\n";
+			}
+			
+			String validationLastNameResult = validateField(getLastName(), "Nazwisko");
+			if(!validationLastNameResult.equals("")) {
+				allValidationErrors += validationLastNameResult  + "\n";
+			}
+			
+			String validationPESELResult = validateField(getPesel(), "PESEL");
+			if(!validationPESELResult.equals("")) {
+				allValidationErrors += validationPESELResult  + "\n";
+			}
+			
+			if(getPassword().length() < 5) {
+				allValidationErrors += "Has³o musi zawieraæ conajmniej 5 znaków\n";
+			}
+			
+			System.out.println(allValidationErrors);
+			if(!allValidationErrors.equals("")){
+				JOptionPane.showMessageDialog(null, allValidationErrors);
+			} else {
+				registerUser(getFirstName().getText(), getLastName().getText(), getEmail().getText(), getPassword(), getPesel().getText());
+			}
+			
+			
 		}
+	}
+	
+	// walidacja imienia, nazwiska i peselu
+	private String validateField(JTextField field, String name) {
+		String error = "";
+		String value = field.getText();
+		if(value.equals("")) {
+			error = "Proszê uzupe³niæ pole " + name;
+		}
+		return error;
 	}
 	
 	// klasa dla przycisku 'Przejdz do logowania'
@@ -208,16 +243,20 @@ public class RegisterPanel extends JPanel {
 			System.out.println("Funkcja przejœcia do okna logowania.");
 		}
 	}
+	
+	private void registerUser(String firstName, String lastName, String email, String password, String pesel) {
+		System.out.println("Tutaj wyœle dane do serwera");
+	}
 
 	// gettery dla wszystkich inputów
-	public String getFirstName() {
-		return firstNameInput.getText();
+	public JTextField getFirstName() {
+		return firstNameInput;
 	}
-	public String getLastName() {
-		return lastNameInput.getText();
+	public JTextField getLastName() {
+		return lastNameInput;
 	}
-	public String getEmail() {
-		return emailInput.getText();
+	public JTextField getEmail() {
+		return emailInput;
 	}
 	public String getPassword() {
 		String password = "";
@@ -227,8 +266,8 @@ public class RegisterPanel extends JPanel {
 		}
 		return password;
 	}
-	public String getPesel() {
-		return peselInput.getText();
+	public JTextField getPesel() {
+		return peselInput;
 	}
 	
 }
