@@ -10,6 +10,11 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,12 +30,13 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import java.util.Base64;
 
 
 public class LoginPanel extends JPanel{
 	private JButton loginButton;								//przycisk "Zaloguj sie"
 	private JButton registerPanelButton;						//przycisk "PrzejdŸ do rejestracji"
-	private JTextField emailInput; 								//input na maila
+	private JTextField usernameInput; 								//input na maila
 	private JPasswordField passwordInput; 						//input na has³o
 	private JPanel loginPanel;
 	private JPanel titlePanel;
@@ -59,16 +65,16 @@ public class LoginPanel extends JPanel{
 	}	
 	//funkcja tworz¹ca inputy z labelkami
 	private void createInputs() {
-		JLabel email = new JLabel("E-mail: ");										//label dla maila	
+		JLabel email = new JLabel("Nazwa: ");										//label dla maila
 		email.setFont(new Font("Arial", Font.PLAIN,20));
 		
-		JLabel password = new JLabel("Haslo: ");									//label dla hasla
+		JLabel password = new JLabel("Has³o: ");									//label dla hasla
 		password.setFont(new Font("Arial", Font.PLAIN,20));
 		
-		this.emailInput = new JTextField();											//input dla maila
-		this.emailInput.setFont(new Font("Arial", Font.PLAIN,15));
-		this.emailInput.setPreferredSize(new Dimension(200,40));
-		this.emailInput.setMargin(new Insets(0, 10, 0, 10));
+		this.usernameInput = new JTextField();											//input dla username
+		this.usernameInput.setFont(new Font("Arial", Font.PLAIN,15));
+		this.usernameInput.setPreferredSize(new Dimension(200,40));
+		this.usernameInput.setMargin(new Insets(0, 10, 0, 10));
 		
 		this.passwordInput = new JPasswordField();									//input dla has³a
 		this.passwordInput.setFont(new Font("Arial", Font.PLAIN,15));
@@ -79,7 +85,7 @@ public class LoginPanel extends JPanel{
 		this.inputPanel.setLayout(new GridLayout(2,2,10,10));
 		this.inputPanel.setBackground(new Color(255, 228, 188));
 		this.inputPanel.add(email);
-		this.inputPanel.add(this.emailInput);
+		this.inputPanel.add(this.usernameInput);
 		this.inputPanel.add(password);
 		this.inputPanel.add(this.passwordInput);
 	}
@@ -133,11 +139,9 @@ public class LoginPanel extends JPanel{
 		public void actionPerformed(ActionEvent e) {
 			String allValidationErrors = "";
 			
-			// walidacja email
-			if(getEmail().equals(""))
-				allValidationErrors += "Proszê podaæ adres mailowy.\n";
-			else if(!RegisterPanel.validate(getEmail().getText()))
-				allValidationErrors += "Proszê wpisaæ poprawny email\n";
+			// walidacja username
+			if(getUsername().getText().length()==0)
+				allValidationErrors += "Proszê podaæ nazwê u¿ytkownika.\n";
 			
 			// walidacja has³a
 			if(getPassword().length()==0)
@@ -147,7 +151,7 @@ public class LoginPanel extends JPanel{
 			if(!allValidationErrors.equals(""))
 				JOptionPane.showMessageDialog(null, allValidationErrors); 
 			else
-				loginUser(getEmail().getText(),getPassword());	
+				loginUser(getUsername().getText(),getPassword());
 		}
 	}
 	
@@ -161,8 +165,8 @@ public class LoginPanel extends JPanel{
         return matcher.find();
 	}
 	//zwraca mail
-	public JTextField getEmail() {
-		return emailInput;
+	public JTextField getUsername() {
+		return usernameInput;
 	}
 	//zwraca has³o
 	public String getPassword() {
@@ -175,7 +179,35 @@ public class LoginPanel extends JPanel{
 	}
 	//funkcja wysy³aj¹ca dane do zweryfikowania logowania
 	public void loginUser(String mail, String pass) {
-		System.out.println("Email: " + mail + ", password: " + pass);
+ 		// route do aktywacji po id
+		String loginUrl = "http://localhost:8081/doctor";
+		String username = mail;
+		String password = pass;
+
+		String authString = username + ":" + password;
+		byte[] authEncBytes = Base64.getEncoder().encode(authString.getBytes());
+		String authStringEnc = new String(authEncBytes);
+		try{
+			URL url = new URL(loginUrl);
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setRequestProperty("Authorization", "Basic " + authStringEnc);
+			con.setRequestMethod("GET");
+			int responseCode = con.getResponseCode();
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			System.out.println("Response code: " + responseCode);
+			System.out.println("Response: " + response);
+			in.close();
+			JOptionPane.showMessageDialog(null, "Poprawne dane. Witamy w systemie.");
+
+		} catch (Exception e){
+			JOptionPane.showMessageDialog(null, "B³êdne dane logowania.");
+		}
 	}
 	//klasa odpwoeidzialna za przycisk "przejdz do rejestracji"
 	class DrawRegisterForm extends JButton implements ActionListener {
