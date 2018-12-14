@@ -1,5 +1,9 @@
 package main;
 
+import org.apache.commons.io.IOUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -10,7 +14,9 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -183,7 +189,8 @@ public class LoginPanel extends JPanel{
 		String loginUrl = "http://localhost:8081/doctor";
 		String username = mail;
 		String password = pass;
-
+		int responseCode = 0;
+		JSONObject json = null;
 		String authString = username + ":" + password;
 		byte[] authEncBytes = Base64.getEncoder().encode(authString.getBytes());
 		String authStringEnc = new String(authEncBytes);
@@ -192,21 +199,38 @@ public class LoginPanel extends JPanel{
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestProperty("Authorization", "Basic " + authStringEnc);
 			con.setRequestMethod("GET");
-			int responseCode = con.getResponseCode();
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(con.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
+			responseCode = con.getResponseCode();
+//			BufferedReader in = new BufferedReader(
+//					new InputStreamReader(con.getInputStream()));
+//			String inputLine;
+//			response = new StringBuffer();
+//			while ((inputLine = in.readLine()) != null) {
+//				response.append(inputLine);
+//			}
+
+			InputStream in = new BufferedInputStream(con.getInputStream());
+			String result = IOUtils.toString(in, "UTF-8");
+			JSONParser parser = new JSONParser();
+			json = (JSONObject) parser.parse(result);
+
 			System.out.println("Response code: " + responseCode);
-			System.out.println("Response: " + response);
+			System.out.println("Response: " + json);
 			in.close();
 			JOptionPane.showMessageDialog(null, "Poprawne dane. Witamy w systemie.");
-
 		} catch (Exception e){
 			JOptionPane.showMessageDialog(null, "B³êdne dane logowania.");
+		} finally{
+			// responseCode jest 200 gdy dobre dane, inaczej Karol wysy³a response 401 - unauthorized
+			if(responseCode == 200){
+				JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(loginPanel);
+				JScrollPane scroll = new JScrollPane(new UserListPanel(json), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				topFrame.getContentPane().removeAll();
+				topFrame.getContentPane().add(scroll);
+				topFrame.invalidate();
+				topFrame.validate();
+				topFrame.repaint();
+				topFrame.setTitle("Lista");
+			}
 		}
 	}
 	//klasa odpwoeidzialna za przycisk "przejdz do rejestracji"
