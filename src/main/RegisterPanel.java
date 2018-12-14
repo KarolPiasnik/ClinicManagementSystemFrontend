@@ -302,17 +302,19 @@ public class RegisterPanel extends JPanel {
 	
 	// metoda wysy³a dane do serwera
 	private void registerUser(String firstName, String lastName, String email, String password, String pesel) throws IOException {
-		System.out.println("Tutaj wyœle dane do serwera");
-
+		// zbieram danie do wys³ania
 		JSONObject userData = new JSONObject();
-		userData.put("username", getFirstName().getText());
-		userData.put("email", getEmail().getText());
-		userData.put("password", getPassword());
+		userData.put("username", firstName);
+		userData.put("email", email);
+		userData.put("password", password);
+		userData.put("pesel", pesel);
 
-		String query_url = "http://localhost:8081/register";
+		// route do rejestracji
+		String registerUrl = "http://localhost:8081/register";
 		try{
-			URL url = new URL(query_url);
+			URL url = new URL(registerUrl);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			// dane jakie wyœle, to json:
 			conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
@@ -320,24 +322,44 @@ public class RegisterPanel extends JPanel {
 			OutputStream os = conn.getOutputStream();
 			os.write(userData.toString().getBytes("UTF-8"));
 			os.close();
-
-			// read the response
+			// odczytuje odpowiedŸ od serwera
 			InputStream in = new BufferedInputStream(conn.getInputStream());
 			String result = IOUtils.toString(in, "UTF-8");
-
 			JSONParser parser = new JSONParser();
 			JSONObject json = (JSONObject) parser.parse(result);
-
-			// pobieram id usera, ¿eby mo¿na by³o potem aktywowaæ go,
-			// dziêki Karol za tak zjeban¹ logikê :)
+			// pobieram id usera
 			Object id = json.get("id");
-
-			System.out.println(id.toString());
-
+			System.out.println("Zarejestrowan u¿ytkonika o ID: " + id.toString());
 			in.close();
 			conn.disconnect();
+			activateUser(id.toString());
 		} catch (Exception e) {
 			System.out.println(e);
+		}
+	}
+
+	// aktywacja u¿ytkownika po rejestracji
+	private void activateUser(String userId){
+		// route do aktywacji po id
+		String activateUrl = "http://localhost:8081/register/" + userId + "/activate";
+		try{
+			URL url = new URL(activateUrl);
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod("GET");
+			int responseCode = con.getResponseCode();
+			System.out.println("\nSending 'GET' request to URL : " + url);
+			System.out.println("Response Code : " + responseCode);
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			System.out.println(response.toString());
+		} catch (Exception e){
+			e.printStackTrace();
 		}
 	}
 
