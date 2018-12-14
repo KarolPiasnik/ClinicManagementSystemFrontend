@@ -58,6 +58,9 @@ public class RegisterPanel extends JPanel {
 	private JPasswordField passwordInput; 				//input na has³o
 	private JTextField peselInput; 						//input na pesel
 	private JPanel registerPanel;
+	// wyra¿enie regularne dla poprawnego emaila
+	public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+			Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 	
 	public RegisterPanel() {
 		registerPanel = this;
@@ -174,7 +177,6 @@ public class RegisterPanel extends JPanel {
 			    	registerButton.setBackground(new Color(255, 114, 0	));
 			    	registerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			    }
-
 			    public void mouseExited(java.awt.event.MouseEvent evt) {
 			    	registerButton.setBackground(new Color(198, 89, 0));
 			    }
@@ -184,19 +186,16 @@ public class RegisterPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String allValidationErrors = "";
-			
 			// walidacja imienia
 			String validationFirstNameResult = validateField(getFirstName(), "Imiê");
 			if(!validationFirstNameResult.equals("")) {
 				allValidationErrors += validationFirstNameResult + "\n";
 			}
-			
 			// walidacja nazwiska
 			String validationLastNameResult = validateField(getLastName(), "Nazwisko");
 			if(!validationLastNameResult.equals("")) {
 				allValidationErrors += validationLastNameResult  + "\n";
 			}
-			
 			// walidacja peselu
 			String validationPESELResult = validateField(getPesel(), "PESEL");
 			if(!validationPESELResult.equals("")) {
@@ -206,12 +205,10 @@ public class RegisterPanel extends JPanel {
 			} else if(getPesel().getText().length() != 11) {
 				allValidationErrors += "Pesel musi zawieraæ 11 cyfr\n";
 			}
-			
 			// walidacja has³a
 			if(getPassword().length() < 5) {
 				allValidationErrors += "Has³o musi zawieraæ conajmniej 5 znaków\n";
 			}
-			
 			// walidacja email
 			String validationEmailResult = validateField(getEmail(), "Email");
 			if(!validationEmailResult.equals("")) {
@@ -219,9 +216,6 @@ public class RegisterPanel extends JPanel {
 			} else if(!RegisterPanel.validate(getEmail().getText())) {
 				allValidationErrors += "Proszê wpisaæ poprawny email\n";
 			}
-			
-			
-			System.out.println(allValidationErrors);
 			if(!allValidationErrors.equals("")){
 				JOptionPane.showMessageDialog(null, allValidationErrors);
 			} else {
@@ -231,14 +225,8 @@ public class RegisterPanel extends JPanel {
 					e1.printStackTrace();
 				}
 			}
-			
-			
 		}
 	}
-	
-	// wyra¿enie regularne dla poprawnego emaila
-	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
-	    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 	
 	// sprawdza czy email ma poprawny format
 	public static boolean validate(String emailStr) {
@@ -280,7 +268,6 @@ public class RegisterPanel extends JPanel {
 			    	loginPanelButton.setBackground(new Color(211, 228, 255));
 			    	loginPanelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			    }
-
 			    public void mouseExited(java.awt.event.MouseEvent evt) {
 			    	loginPanelButton.setBackground(new Color(188, 214, 255));
 			    }
@@ -288,16 +275,20 @@ public class RegisterPanel extends JPanel {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(registerPanel);
-			JScrollPane scroll = new JScrollPane(new LoginPanel(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			topFrame.getContentPane().removeAll();
-			topFrame.getContentPane().add(scroll);
-			topFrame.invalidate();
-			topFrame.validate();	
-			topFrame.repaint();
-			topFrame.setTitle("Logowanie");
-			System.out.println("Funkcja przejœcia do okna logowania.");
+			changeViewToLogin();
 		}
+	}
+
+	private void changeViewToLogin(){
+		JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(registerPanel);
+		JScrollPane scroll = new JScrollPane(new LoginPanel(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		topFrame.getContentPane().removeAll();
+		topFrame.getContentPane().add(scroll);
+		topFrame.invalidate();
+		topFrame.validate();
+		topFrame.repaint();
+		topFrame.setTitle("Logowanie");
+		System.out.println("Funkcja przejœcia do okna logowania.");
 	}
 	
 	// metoda wysy³a dane do serwera
@@ -347,8 +338,6 @@ public class RegisterPanel extends JPanel {
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			int responseCode = con.getResponseCode();
-			System.out.println("\nSending 'GET' request to URL : " + url);
-			System.out.println("Response Code : " + responseCode);
 			BufferedReader in = new BufferedReader(
 					new InputStreamReader(con.getInputStream()));
 			String inputLine;
@@ -357,7 +346,8 @@ public class RegisterPanel extends JPanel {
 				response.append(inputLine);
 			}
 			in.close();
-			System.out.println(response.toString());
+			JOptionPane.showMessageDialog(null, "Pomyœlnie zarejestrowano. Mo¿na siê zalogowaæ.");
+			changeViewToLogin();
 		} catch (Exception e){
 			e.printStackTrace();
 		}
