@@ -200,13 +200,6 @@ public class LoginPanel extends JPanel{
 			con.setRequestProperty("Authorization", "Basic " + authStringEnc);
 			con.setRequestMethod("GET");
 			responseCode = con.getResponseCode();
-//			BufferedReader in = new BufferedReader(
-//					new InputStreamReader(con.getInputStream()));
-//			String inputLine;
-//			response = new StringBuffer();
-//			while ((inputLine = in.readLine()) != null) {
-//				response.append(inputLine);
-//			}
 
 			InputStream in = new BufferedInputStream(con.getInputStream());
 			String result = IOUtils.toString(in, "UTF-8");
@@ -222,14 +215,18 @@ public class LoginPanel extends JPanel{
 		} finally{
 			// responseCode jest 200 gdy dobre dane, inaczej Karol wysy³a response 401 - unauthorized
 			if(responseCode == 200){
+
+				User.username = username;
+				User.password = password;
+
 				JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(loginPanel);
-				JScrollPane scroll = new JScrollPane(new UserListPanel(json), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				JScrollPane scroll = new JScrollPane(new PersonalDataPanel(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 				topFrame.getContentPane().removeAll();
 				topFrame.getContentPane().add(scroll);
 				topFrame.invalidate();
 				topFrame.validate();
 				topFrame.repaint();
-				topFrame.setTitle("Lista");
+				topFrame.setTitle("Twoje dane");
 			}
 		}
 	}
