@@ -9,6 +9,7 @@ public class PersonalDataPanel extends JPanel {
     private JPanel toolbarPanel;
     private JPanel titlePanel;
     private JPanel parentPanel;
+    private JPanel dataPanel;
 
     public PersonalDataPanel(){
         super();
@@ -17,6 +18,7 @@ public class PersonalDataPanel extends JPanel {
         this.setLayout(new FlowLayout());
         this.toolbarPanel = new ToolbarPanel();
         this.createHeader();
+        this.createData();
         this.createPanels();
     }
 
@@ -30,6 +32,42 @@ public class PersonalDataPanel extends JPanel {
         titlePanel.add(title);
     }
 
+    private void createData(){
+        dataPanel = new JPanel();
+        dataPanel.setLayout(new GridLayout(4,2));
+        dataPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
+        dataPanel.setBackground(new Color(255, 228, 188));
+
+        JLabel usernameKey = new JLabel("Username: ");
+        usernameKey.setFont(new Font("Arial", Font.PLAIN,20));
+        JLabel usernameValue = new JLabel(User.username);
+        usernameValue.setFont(new Font("Arial", Font.PLAIN,20));
+
+        JLabel emailKey = new JLabel("Email: ");
+        emailKey.setFont(new Font("Arial", Font.PLAIN,20));
+        JLabel emailValue = new JLabel("brak danych");
+        emailValue.setFont(new Font("Arial", Font.PLAIN,20));
+
+        JLabel peselKey = new JLabel("Pesel: ");
+        peselKey.setFont(new Font("Arial", Font.PLAIN,20));
+        JLabel peselValue = new JLabel("brak danych");
+        peselValue.setFont(new Font("Arial", Font.PLAIN,20));
+
+        JLabel dateKey = new JLabel("Data rejestracji: ");
+        dateKey.setFont(new Font("Arial", Font.PLAIN,20));
+        JLabel dateValue = new JLabel("brak danych");
+        dateValue.setFont(new Font("Arial", Font.PLAIN,20));
+
+        dataPanel.add(usernameKey);
+        dataPanel.add(usernameValue);
+        dataPanel.add(emailKey);
+        dataPanel.add(emailValue);
+        dataPanel.add(peselKey);
+        dataPanel.add(peselValue);
+        dataPanel.add(dateKey);
+        dataPanel.add(dateValue);
+    }
+
     // tworzy panel przycisków i parent panel
     private void createPanels() {
         parentPanel = new JPanel();
@@ -37,6 +75,7 @@ public class PersonalDataPanel extends JPanel {
         parentPanel.setBackground(new Color(255, 228, 188));
         parentPanel.add(toolbarPanel, BorderLayout.NORTH);
         parentPanel.add(titlePanel, BorderLayout.CENTER);
+        parentPanel.add(dataPanel, BorderLayout.SOUTH);
         add(parentPanel);
         setBackground(new Color(255, 228, 188));
     }

@@ -96,21 +96,30 @@ public class UserListPanel extends JPanel {
             this.usersPanel.setLayout(new GridLayout(parsedUsers.size(),1,10,10));
             this.usersPanel.setBackground(new Color(255, 228, 188));
 
+            DefaultListModel<String> model = new DefaultListModel<>();
+            JList lista = new JList(model);
+            lista.setFixedCellHeight(50);
+            lista.setFixedCellWidth(100);
+
             for(int i = 0; i < parsedUsers.size(); i++){
                 JSONObject parsedUserObject = (JSONObject) parser.parse(parsedUsers.get(i).toString());
                 Object userUsername = parsedUserObject.get("username");
                 Object userPassword = parsedUserObject.get("password");
-                JLabel usernameLabel = new JLabel(userUsername.toString());
-                usernameLabel.setFont(new Font("Arial", Font.PLAIN,20));
-                this.usersPanel.add(usernameLabel);
+                model.addElement( userUsername.toString());
+
+
+//                JLabel usernameLabel = new JLabel(userUsername.toString());
+//                usernameLabel.setFont(new Font("Arial", Font.PLAIN,20));
+//                this.usersPanel.add(usernameLabel);
             }
+            this.usersPanel.add(lista);
 
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
-    // tworzy panel przycisków i parent panel
+    // tworzy panel przycisków i pnarent pael
     private void createPanels() {
         parentPanel = new JPanel();
         parentPanel.setLayout(new BorderLayout());

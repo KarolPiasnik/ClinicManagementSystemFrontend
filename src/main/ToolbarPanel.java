@@ -3,6 +3,8 @@ package main;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -23,6 +25,7 @@ public class ToolbarPanel extends JPanel {
     // tworzy toolbar na górze widoku
     private void createToolbar(){
         this.toolbar = new JToolBar();
+        this.toolbar.setBorder( BorderFactory.createEmptyBorder() );
         toolbar.setFloatable( false);
         toolbar.addSeparator();
         personalDataButton = new PersonalData();
@@ -32,6 +35,7 @@ public class ToolbarPanel extends JPanel {
         logoutButton = new Logout();
         toolbar.add(logoutButton);
         toolbarPanel.add(toolbar);
+        this.toolbarPanel.setBackground(new Color(255, 228, 188));
     }
 
     // klasa dla przycisku 'Wyloguj sie'
@@ -39,6 +43,19 @@ public class ToolbarPanel extends JPanel {
         Logout(){
             super("Wyloguj sie");
             addActionListener(this);
+            setBackground(new Color(188, 214, 255));
+            Border emptyBorder = BorderFactory.createEmptyBorder(10,10,10,10);
+            this.setBorder(emptyBorder);
+            // event po najechaniu i zjechaniu myszką z przycisku
+            this.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    logoutButton.setBackground(new Color(211, 228, 255));
+                    logoutButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    logoutButton.setBackground(new Color(188, 214, 255));
+                }
+            });
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -58,6 +75,19 @@ public class ToolbarPanel extends JPanel {
         PersonalData(){
             super("Twoje dane");
             addActionListener(this);
+            setBackground(new Color(188, 214, 255));
+            Border emptyBorder = BorderFactory.createEmptyBorder(10,10,10,10);
+            this.setBorder(emptyBorder);
+            // event po najechaniu i zjechaniu myszką z przycisku
+            this.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    personalDataButton.setBackground(new Color(211, 228, 255));
+                    personalDataButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    personalDataButton.setBackground(new Color(188, 214, 255));
+                }
+            });
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -77,6 +107,19 @@ public class ToolbarPanel extends JPanel {
         UserList(){
             super("Lista uzytkownikow");
             addActionListener(this);
+            setBackground(new Color(188, 214, 255));
+            Border emptyBorder = BorderFactory.createEmptyBorder(10,10,10,10);
+            this.setBorder(emptyBorder);
+            // event po najechaniu i zjechaniu myszką z przycisku
+            this.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    userListButton.setBackground(new Color(211, 228, 255));
+                    userListButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    userListButton.setBackground(new Color(188, 214, 255));
+                }
+            });
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -87,7 +130,7 @@ public class ToolbarPanel extends JPanel {
             topFrame.invalidate();
             topFrame.validate();
             topFrame.repaint();
-            topFrame.setTitle("Lista użytkowników");
+            topFrame.setTitle("Lista uzytkownikow");
         }
     }
 
